@@ -241,3 +241,41 @@ This code takes a minidump file as input. After it discovers a _Browser_ object 
 System requirements
 - 32GB of RAM
 - At least 50GB of free disk space
+
+# how to run fast
+
+Case 1:
+
+```
+python3 case1_lowmem.py --bases 2097297655728 2097301836336 2097349779280 2097419539712
+```
+
+Case 2:
+
+```
+python3 case2_lowmem.py --bases 2229826644976
+```
+
+Case 3:
+
+```
+python3 case3_lowmem.py --bases 1885639781552
+```
+
+Case 4:
+
+```
+python3 case4_lowmem.py --bases 1885639781552
+```
+
+Case Brave:
+
+```
+python3 case_brave_lowmem.py --bases 0x2E3800114C00
+```
+
+Case Google Chrome:
+
+```
+python3 case_google_chrome_lowmem.py --bases 0x1E2400106DD8
+```
