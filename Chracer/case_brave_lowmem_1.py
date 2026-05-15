@@ -2,19 +2,26 @@
 import argparse
 import datetime
 import sys
+import os
 from pathlib import Path
-
 import tqdm
+
 from minidump.minidumpfile import MinidumpFile
 from minidump.streams import MemoryType, MemoryState, AllocationProtect
 
-from lowmem_runtime import configure_lowmem_symbols, save_results
-# IMPORT MODULE BẢO TOÀN CHỨNG CỨ
-from acquisition.hash_dump import preserve_evidence
-
+# 1. KHAI BÁO ĐƯỜNG DẪN VÀ THÊM VÀO SYS.PATH TRƯỚC
 ROOT = Path(__file__).resolve().parent
-DEFAULT_DUMP = ROOT / 'dumps' / 'case_brave.dmp'
+PROJECT_ROOT = ROOT.parent
+sys.path.append(str(PROJECT_ROOT)) # Mở đường cho Python tìm thư mục gốc
+
+RESULT_DIR = PROJECT_ROOT / 'reports'
+DEFAULT_DUMP = PROJECT_ROOT / 'dumps' / 'case_brave.dmp'
 KNOWN_BASES = [0x2E3800114C00]
+
+# 2. BÂY GIỜ MỚI IMPORT CÁC MODULE (Python đã biết đường đi)
+from acquisition.hash_dump import preserve_evidence
+from reporting.generate_report import generate_all_reports
+from lowmem_runtime import configure_lowmem_symbols
 
 
 def parse_args():
@@ -26,6 +33,8 @@ def parse_args():
 
 def main():
     args = parse_args()
+    
+    # 1. Gọi module bảo toàn chứng cứ
     preserve_evidence(args.dump)
     
     print('### start to load symbols at', datetime.datetime.now())
@@ -93,18 +102,47 @@ def main():
                     try:
                         e = BraveNavigationEntry(mdmp, int.from_bytes(ep, 'little'))
                         fe = e.frame_tree.frame_entry
-                        rows.append((b.session_id, ti, e.timestamp.to_datetime(), e.title.string, fe.url.spec.string))
+                        
+                        # Lọc thời gian 1601 (Hiển thị N/A nếu trống)
+                        raw_time = e.timestamp.to_datetime()
+                        display_time = raw_time if raw_time and raw_time.year > 1601 else "N/A"
+                        
+                        # TRẢ VỀ ĐÚNG THỨ TỰ CỦA KỊCH BẢN BRAVE: SessionID, Tab, Time, Title, URL
+                        rows.append((b.session_id, ti, display_time, e.title.string, fe.url.spec.string))
                     except Exception:
                         continue
         except Exception:
             continue
 
     print('### end to extract information at', datetime.datetime.now())
+    
+    # --- THỰC HIỆN CẢI TIẾN 4 ---
+    # Header chuẩn của Case Brave (Time đứng trước Title)
     headers = ['SessionID', 'Tab', 'Time', 'Title', 'URL']
-    table_output, txt_path, csv_path = save_results(ROOT, 'case_brave_lowmem', headers, rows)
-    print(table_output)
-    print(f'### saved text result to {txt_path}')
-    print(f'### saved csv result to {csv_path}')
+    
+    try:
+        from tabulate import tabulate
+        print(tabulate(rows, headers=headers))
+    except ImportError:
+        pass
+
+    # Lấy đường dẫn Metadata để nhúng Hash
+    dump_path = Path(args.dump)
+    metadata_path = ROOT / "acquisition" / "result" / f"{dump_path.stem}_evidence_metadata.json"
+    
+    # Gọi module xuất báo cáo HTML/JSON/CSV
+    csv_path, json_path, html_path = generate_all_reports(
+        case_name="case_brave_report", 
+        headers=headers, 
+        data=rows, 
+        metadata_file_path=str(metadata_path),
+        output_dir=str(RESULT_DIR)
+    )
+
+    print(f'### Báo cáo CSV đã lưu tại: {csv_path}')
+    print(f'### Báo cáo JSON đã lưu tại: {json_path}')
+    print(f'### Báo cáo HTML đã lưu tại: {html_path}')
+    print('### HOÀN TẤT TRÍCH XUẤT VÀ LẬP BÁO CÁO!')
 
 
 if __name__ == '__main__':

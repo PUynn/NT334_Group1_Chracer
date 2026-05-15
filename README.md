@@ -7,8 +7,9 @@ NT334_Group1_Chracer/
 │   │   └── hash_dump.py
 │   ├── baseline/
 │   │   └── regex_extractor.py
-│   └── prototype/
-│       └── run_chracer.py       # Gọi Chracer
+│   ├── prototype/
+│   │   └── run_chracer.py       # Gọi Chracer
+│   └── case1.py                  # Các case
 │
 ├── evaluation/
 │   ├── evaluate_results.py
@@ -19,6 +20,7 @@ NT334_Group1_Chracer/
 │   └── generate_report.py
 │
 ├── dumps/                       # Memory dump
+├── symbols/                     # Sympols
 └── reports/                     # Báo cáo HTML/CSV/JSON
 ```
 

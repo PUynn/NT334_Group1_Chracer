@@ -4,22 +4,32 @@ import datetime
 import gc
 import re
 import sys
+import os
 import types
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
 from tabulate import tabulate
 from minidump.minidumpfile import MinidumpFile
-# IMPORT MODULE BẢO TOÀN CHỨNG CỨ
-from acquisition.hash_dump import preserve_evidence
 
 ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = ROOT.parent
+sys.path.append(str(PROJECT_ROOT))
+
+RESULT_DIR = PROJECT_ROOT / 'reports'
+
 CHRACER_DIR = ROOT / 'chracer'
+DEFAULT_DUMP = PROJECT_ROOT / 'dumps' / 'case1.dmp'
+
+# IMPORT MODULE
+from acquisition.hash_dump import preserve_evidence
+from reporting.generate_report import generate_all_reports
+
 SYMBOL_FILES = [
-    ROOT / 'symbols' / 'chrome.dll.pdb.xml',
-    ROOT / 'symbols' / 'content.dll.pdb.xml',
+    ROOT.parent / 'symbols' / 'chrome.dll.pdb.xml',
+    ROOT.parent / 'symbols' / 'content.dll.pdb.xml',
 ]
-RESULT_DIR = ROOT / 'result'
+
 
 # Matches:
 # ./classes/class[@name="Browser"]
@@ -274,7 +284,12 @@ def extract_case1(dump_path, browser_bases):
                     nav_entry = NavigationEntry(mdmp, nav_entry_base)
                     title = nav_entry.title.string
                     url = nav_entry.frame_tree.frame_entry.url
-                    printed_table.append((session_id, tab_idx, title, url))
+                    
+                    # CẬP NHẬT NHỎ: Lấy thời gian để ghép đủ 5 cột giống Case 3
+                    raw_time = nav_entry.timestamp.to_datetime()
+                    display_time = raw_time if raw_time and raw_time.year > 1601 else "N/A"
+                    
+                    printed_table.append((session_id, tab_idx, title, display_time, url))
                 except Exception as e:
                     print('[WARN] 0x{:X} nav entry error ({})'.format(nav_entry_base, e))
                     continue
@@ -282,29 +297,32 @@ def extract_case1(dump_path, browser_bases):
             gc.collect()
 
     print('### end to extract information at', datetime.datetime.now())
-    table_output = tabulate(printed_table, headers=['SessionID', 'Tab', 'Title', 'URL'])
-    print(table_output)
+    
+    # --- PHẦN TÍCH HỢP CẢI TIẾN 4 ---
+    # Cấu trúc đã được đồng bộ chuẩn với Case 3
+    headers = ['SessionID', 'Tab', 'Title', 'Time', 'URL']
+    
+    # SỬA ĐƯỜNG DẪN: Trỏ vào acquisition/result và dùng dump_path thay vì args (tránh lỗi NameError)
+    metadata_path = ROOT / "acquisition" / "result" / f"{dump_path.stem}_evidence_metadata.json"
+    
+    # Gọi module sinh báo cáo tự động
+    csv_path, json_path, html_path = generate_all_reports(
+        case_name="case1_report", 
+        headers=headers, 
+        data=printed_table,
+        metadata_file_path=str(metadata_path),
+        output_dir=str(RESULT_DIR)
+    )
 
-    RESULT_DIR.mkdir(parents=True, exist_ok=True)
-    ts = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    txt_path = RESULT_DIR / f'case1_lowmem_{ts}.txt'
-    csv_path = RESULT_DIR / f'case1_lowmem_{ts}.csv'
-
-    txt_path.write_text(table_output + '\n', encoding='utf-8')
-    with csv_path.open('w', encoding='utf-8', newline='') as f:
-        f.write('SessionID,Tab,Title,URL\n')
-        for session_id, tab_idx, title, url in printed_table:
-            safe_title = '"' + str(title).replace('"', '""') + '"'
-            safe_url = '"' + str(url).replace('"', '""') + '"'
-            f.write(f'{session_id},{tab_idx},{safe_title},{safe_url}\n')
-
-    print(f'### saved text result to {txt_path}')
-    print(f'### saved csv result to {csv_path}')
-
+    print(f'### Báo cáo CSV đã lưu tại: {csv_path}')
+    print(f'### Báo cáo JSON đã lưu tại: {json_path}')
+    print(f'### Báo cáo HTML đã lưu tại: {html_path}')
+    print('### HOÀN TẤT TRÍCH XUẤT VÀ LẬP BÁO CÁO!')
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Low-memory case1 extractor (does not modify case1.py).')
-    parser.add_argument('--dump', default='dumps/case1.dmp', help='Path to .dmp file')
+    # SỬA DÒNG DƯỚI ĐÂY: Dùng str(DEFAULT_DUMP) thay vì chuỗi tĩnh 'dumps/case1.dmp'
+    parser.add_argument('--dump', default=str(DEFAULT_DUMP), help='Path to .dmp file')
     parser.add_argument(
         '--bases',
         nargs='*',
@@ -314,9 +332,7 @@ def parse_args():
     )
     return parser.parse_args()
 
-
 if __name__ == '__main__':
     args = parse_args()
     preserve_evidence(args.dump)
-
     extract_case1(Path(args.dump), args.bases)
