@@ -1,0 +1,11 @@
+case_id,artifact_id,artifact_type,status,expected,recovered,expected_context,matched_context,completeness,note
+case3,C3-01,url,TP,https://www.wikipedia.org,https://www.wikipedia.org,tab+order+url+from,tab+order+url,0.75,URL recovered by Chracer
+case3,C3-02,url,TP,https://en.wikipedia.org/wiki/Digital_forensics,https://en.wikipedia.org/wiki/Digital_forensics,tab+order+url+from,tab+order+url+from,1.0,URL recovered by Chracer
+case3,C3-03,url,TP,https://en.wikipedia.org/wiki/Computer_forensics,https://en.wikipedia.org/wiki/Computer_forensics,tab+order+url+from,tab+order+url+from,1.0,URL recovered by Chracer
+case3,C3-04,url,TP,https://en.wikipedia.org/wiki/Digital_evidence,https://en.wikipedia.org/wiki/Digital_evidence,tab+order+url+from,tab+order+url+from,1.0,URL recovered by Chracer
+case3,C3-05,url,TP,https://en.wikipedia.org/wiki/Best_evidence_rule,https://en.wikipedia.org/wiki/Best_evidence_rule,tab+order+url+from,tab+order+url+from,1.0,URL recovered by Chracer
+case3,C3-06,url,TP,https://www.chromium.org,https://www.chromium.org/chromium-projects,tab+order+url+from,tab+order+url,0.75,URL recovered by Chracer
+case3,C3-07,url,TP,https://www.chromium.org/Home,https://www.chromium.org/Home,tab+order+url+from,tab+order+url+from,1.0,URL recovered by Chracer
+case3,C3-08,url,TP,https://www.chromium.org/developers,https://www.chromium.org/developers,tab+order+url+from,tab+order+url+from,1.0,URL recovered by Chracer
+case3,C3-09,url,TP,https://www.chromium.org/developers/how-tos/getting-around-the-chrome-source-code,https://www.chromium.org/developers/how-tos/getting-around-the-chrome-source-code,tab+order+url+from,tab+order+url+from,1.0,URL recovered by Chracer
+case3,C3-10,url,TP,https://www.chromium.org/developers/design-documents/multi-process-architecture,https://www.chromium.org/developers/design-documents/multi-process-architecture,tab+order+url+from,tab+order+url+from,1.0,URL recovered by Chracer

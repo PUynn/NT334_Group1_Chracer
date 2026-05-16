@@ -1,0 +1,5 @@
+case_id,tool,artifact_type,session_id,window_index,tab_index,nav_order,time,title,url_raw,url_norm,referrer_raw,referrer_norm,group_name,group_color,tab_indexes,tab_count,note
+case1,chracer,url,450578886,1,1,1,,Google,https://www.google.com/,https://www.google.com,,,,,,,object_layout_result
+case1,chracer,url,450579008,2,1,1,,GitHub: Let’s build from here · GitHub,https://github.com/,https://github.com,,,,,,,object_layout_result
+case1,chracer,url,450579010,3,1,1,,(4) YouTube,https://www.youtube.com/,https://www.youtube.com,,,,,,,object_layout_result
+case1,chracer,url,450579012,4,1,1,,Home,https://www.chromium.org/chromium-projects/,https://www.chromium.org/chromium-projects,,,,,,,object_layout_result; final_url_after_redirect

@@ -1,0 +1,10 @@
+{
+  "case_id": "case3",
+  "tool": "regex_baseline",
+  "dump": "dumps/case3.dmp",
+  "output_csv": "baseline/results/case3_regex_urls.csv",
+  "total_recovered": 3232,
+  "start_time_epoch": 1778869488.6520846,
+  "end_time_epoch": 1778869578.4072063,
+  "runtime_seconds": 89.7551
+}

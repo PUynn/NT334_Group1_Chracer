@@ -1,0 +1,2 @@
+case_id,tool,ground_truth_total,recovered_total,TP,FP,FN,recovery_rate,fpr_noise_rate,completeness,tta_seconds,note,artifact_type
+case3,regex_baseline,10,3231,10,3221,0,1.0,0.9969,0.25,89.7551,"Regex baseline only evaluates URL recovery, not tab/window/tab-group context",url

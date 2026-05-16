@@ -1,0 +1,5 @@
+case_id,artifact_id,artifact_type,mode,window_index,tab_index,nav_order,timestamp,url_raw,url_norm,from_url_raw,from_url_norm,expected_context
+case1,C1-01,url,normal,1,1,1,2023-03-20 02:03:46,https://www.google.com/,https://www.google.com,chrome://newtab,chrome://newtab,window+tab+url
+case1,C1-02,url,normal,2,1,1,2023-03-20 02:04:07,https://github.com/,https://github.com,chrome://newtab,chrome://newtab,window+tab+url
+case1,C1-03,url,normal,3,1,1,2023-03-20 02:04:07,https://www.youtube.com/,https://www.youtube.com,chrome://newtab,chrome://newtab,window+tab+url
+case1,C1-04,url,normal,4,1,1,2023-03-20 02:04:11,https://www.chromium.org/,https://www.chromium.org,chrome://newtab,chrome://newtab,window+tab+url

@@ -1,0 +1,5 @@
+case_id,artifact_id,artifact_type,status,expected,recovered,expected_context,matched_context,completeness,note
+case1,C1-01,url,TP,https://www.google.com,https://www.google.com,window+tab+url,window+tab+url,1.0,URL recovered by Chracer
+case1,C1-02,url,TP,https://github.com,https://github.com,window+tab+url,window+tab+url,1.0,URL recovered by Chracer
+case1,C1-03,url,TP,https://www.youtube.com,https://www.youtube.com,window+tab+url,window+tab+url,1.0,URL recovered by Chracer
+case1,C1-04,url,TP,https://www.chromium.org,https://www.chromium.org/chromium-projects,window+tab+url,window+tab+url,1.0,URL recovered by Chracer
