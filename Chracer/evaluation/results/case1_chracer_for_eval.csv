@@ -1,0 +1,9 @@
+case_id,artifact_type,window_index,tab_index,nav_order,url_raw,url_norm,referrer_norm,referrer_raw
+case1,url,1,1,1,chrome://new-tab-page/,chrome://new-tab-page,,
+case1,url,1,1,2,https://www.google.com/,https://www.google.com,,
+case1,url,2,1,1,chrome://new-tab-page/,chrome://new-tab-page,,
+case1,url,2,1,2,https://github.com/,https://github.com,,
+case1,url,3,1,1,chrome://new-tab-page/,chrome://new-tab-page,,
+case1,url,3,1,2,https://www.youtube.com/,https://www.youtube.com,,
+case1,url,4,1,1,chrome://new-tab-page/,chrome://new-tab-page,,
+case1,url,4,1,2,https://www.chromium.org/chromium-projects/,https://www.chromium.org/chromium-projects,,

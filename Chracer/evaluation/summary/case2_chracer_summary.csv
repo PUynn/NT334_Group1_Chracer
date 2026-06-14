@@ -1,2 +1,2 @@
 case_id,tool,artifact_type,ground_truth_total,recovered_total,TP,FP,FN,recovery_rate,fpr_noise_rate,completeness,tta_seconds,note
-case2,chracer,tab_group,4,4,4,0,0,1.0,0.0,1.0,0.0519,Chracer evaluation against ground truth
+case2,chracer,tab_group,4,4,4,0,0,1.0,0.0,1.0,0.1205,Chracer evaluation against ground truth

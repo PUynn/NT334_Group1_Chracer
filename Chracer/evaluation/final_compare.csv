@@ -1,4 +1,7 @@
 case_id,tool,artifact_type,ground_truth_total,recovered_total,TP,FP,FN,recovery_rate,fpr_noise_rate,completeness,tta_seconds,note
+case1,chracer,url,4,8,4,0,0,1.0,0.0,1.0,,Chracer evaluation against ground truth
 case1,regex_baseline,url,4,3469,4,3465,0,1.0,0.9988,0.3333,,"Regex baseline only evaluates URL recovery, not tab/window/tab-group context"
+case2,chracer,tab_group,4,4,4,0,0,1.0,0.0,1.0,,Chracer evaluation against ground truth
 case2,regex_baseline,tab_group,4,0,N/A,N/A,N/A,N/A,N/A,N/A,,Regex baseline does not support tab-group recovery
+case3,chracer,url,10,12,10,0,0,1.0,0.0,0.5,,Chracer evaluation against ground truth
 case3,regex_baseline,url,10,3224,10,3214,0,1.0,0.9969,0.25,,"Regex baseline only evaluates URL recovery, not tab/window/tab-group context"

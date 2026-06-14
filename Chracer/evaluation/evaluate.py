@@ -262,9 +262,17 @@ def _evaluate_urls(case_id: str, gt_rows: list[dict], result_rows: list[dict]) -
                 "note": "Ground truth URL not recovered by Chracer",
             })
 
+    # Filter out ignorable internal URLs from FP count
+    ignorable_prefixes = ("chrome://", "edge://", "about:")
+    
     fp = 0
     for idx, rs in enumerate(result_url_rows):
         if idx not in used_result_indexes:
+            recovered_url = get_url(rs)
+            if recovered_url.startswith(ignorable_prefixes):
+                # Skip internal noise
+                continue
+                
             fp += 1
             details.append({
                 "case_id": case_id,
@@ -272,7 +280,7 @@ def _evaluate_urls(case_id: str, gt_rows: list[dict], result_rows: list[dict]) -
                 "artifact_type": "url",
                 "status": "FP",
                 "expected": "",
-                "recovered": get_url(rs),
+                "recovered": recovered_url,
                 "expected_context": "",
                 "matched_context": "",
                 "completeness": 0,
@@ -402,7 +410,7 @@ def run_chracer_eval(
         )
 
     recovery_rate = tp / gt_total if gt_total else 0
-    fpr_noise_rate = fp / gt_total if gt_total else 0
+    fpr_noise_rate = fp / recovered_total if recovered_total else 0
     completeness = sum(c_scores) / len(c_scores) if c_scores else 0
 
     # Write detail CSV
@@ -526,8 +534,12 @@ def run_regex_eval(
             })
 
     # FP
+    ignorable_prefixes = ("chrome://", "edge://", "about:")
     for result_url in result_urls:
         if result_url not in gt_urls:
+            if result_url.startswith(ignorable_prefixes):
+                continue
+                
             fp += 1
             detail_rows.append({
                 "case_id": case_id,
@@ -714,6 +726,18 @@ def run_all() -> None:
 
         # ── Chracer eval ──
         chracer_result = cfg["chracer_result"]
+        if not chracer_result.exists():
+            # Try to auto-normalize from raw result in Chracer/result
+            import sys
+            if str(CHRACER_ROOT) not in sys.path:
+                sys.path.insert(0, str(CHRACER_ROOT))
+            import main
+            raw_glob = f"{case_id}_lowmem_*.csv"
+            raw_report = main.find_latest_report(raw_glob, CHRACER_ROOT / "result")
+            if raw_report:
+                print(f"[INFO] Auto-normalizing raw report: {raw_report.name}")
+                main.report_rows_to_eval_csv(case_id, raw_report, chracer_result)
+
         if chracer_result.exists():
             print(f"\n--- {case_id} / Chracer ---")
             run_chracer_eval(
@@ -723,7 +747,7 @@ def run_all() -> None:
                 artifact_type=cfg["artifact_type"],
             )
         else:
-            print(f"[SKIP] {case_id} Chracer: result not found: {chracer_result}")
+            print(f"[SKIP] {case_id} Chracer: result not found in evaluation/results/ and no raw report in result/")
 
         # ── Regex eval ──
         regex_result = cfg["regex_result"]
