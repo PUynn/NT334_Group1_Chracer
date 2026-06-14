@@ -1,7 +1,4 @@
-case_id,tool,ground_truth_total,recovered_total,TP,FP,FN,recovery_rate,fpr_noise_rate,completeness,tta_seconds,note,artifact_type
-case1,regex_baseline,4,3477,4,3473,0,1.0,0.9988,0.3333,88.0278,"Regex baseline only evaluates URL recovery, not tab/window/tab-group context",url
-case1,chracer,4,4,4,0,0,1.0,0.0,1.0,0.0760,Chracer evaluation against ground truth,url
-case2,regex_baseline,4,0,N/A,N/A,N/A,N/A,N/A,N/A,,Regex baseline does not support tab-group recovery,tab_group
-case2,chracer,4,4,4,0,0,1.0,0.0,1.0,0.0519,Chracer evaluation against ground truth,tab_group
-case3,regex_baseline,10,3231,10,3221,0,1.0,0.9969,0.25,89.7551,"Regex baseline only evaluates URL recovery, not tab/window/tab-group context",url
-case3,chracer,10,10,10,0,0,1.0,0.0,0.95,0.0744,Chracer evaluation against ground truth,url
+case_id,tool,artifact_type,ground_truth_total,recovered_total,TP,FP,FN,recovery_rate,fpr_noise_rate,completeness,tta_seconds,note
+case1,regex_baseline,url,4,3469,4,3465,0,1.0,0.9988,0.3333,,"Regex baseline only evaluates URL recovery, not tab/window/tab-group context"
+case2,regex_baseline,tab_group,4,0,N/A,N/A,N/A,N/A,N/A,N/A,,Regex baseline does not support tab-group recovery
+case3,regex_baseline,url,10,3224,10,3214,0,1.0,0.9969,0.25,,"Regex baseline only evaluates URL recovery, not tab/window/tab-group context"

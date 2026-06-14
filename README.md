@@ -1,27 +1,22 @@
 
 ```text
 NT334_Group1_Chracer/
-├── Chracer/                     # Chracer tool
-│   ├── main.py
-│   ├── acquisition/
-│   │   └── hash_dump.py
-│   ├── baseline/
-│   │   └── regex_extractor.py
-│   ├── prototype/
-│   │   └── run_chracer.py       # Gọi Chracer
-│   └── case1.py                  # Các case
-│
-├── evaluation/
-│   ├── evaluate_results.py
-│   ├── ground_truth/            # File CSV ground truth
-│   └── results/                 # Kết quả phân tích
-│
-├── reporting/
-│   └── generate_report.py
-│
-├── dumps/                       # Memory dump
-├── symbols/                     # Sympols
-└── reports/                     # Báo cáo HTML/CSV/JSON
+├── Chracer/                     
+│   ├── main.py                  # Main pipeline script (Hash -> Scan -> Eval -> Report)
+│   ├── acquisition/             # Hashing
+│   ├── baseline/                # Independent Regex baseline tool
+│   │   └── results/             # Baseline extraction outputs
+│   ├── chracer/                 # Core memory analysis engine                          
+│   │                 
+│   ├── evaluation/              # Unified evaluation module
+│   │   ├── details/             # Detailed eval metrics (TP/FP/FN)
+│   │   └── summary/             # Aggregated summary reports
+│   ├── ground_truth/            # Ground truth CSV datasets
+│   ├── dumps/                   # Target memory dumps (.dmp)
+│   ├── result/                  # Temporary Chracer extraction results
+│   └── symbols/                 # Chromium symbols cache
+├── reporting/                   # Report generation logic
+└── reports/                     # Final generated reports (HTML/CSV/JSON)
 ```
 
 # Chracer-Based Chromium Memory Forensics
@@ -32,31 +27,39 @@ A digital forensics project that analyzes memory dumps of Chromium-based browser
 
 ## Objectives
 
-- Reproduce the core workflow of Chracer.
-- Extract browser artifacts from Chromium memory dumps.
-- Compare object-layout-based analysis with basic string-search methods.
-- Evaluate recovery results using custom memory dump cases.
+- Reproduce the Chracer memory forensics framework for Chromium-based browsers.
+- Recover browser artifacts from process memory using object layout analysis.
+- Compare object-layout-based reconstruction against Regex-based memory searching.
+- Evaluate forensic recovery performance using ground-truth datasets.
 
-## Main Features
-- Memory dump analysis for Chromium-based browsers.
-- URL extraction from browser process memory.
-- Tab/window reconstruction.
-- Incognito/Private mode trace recovery.
-- Baseline comparison using string-search.
+## Features
+
+- Chromium memory dump analysis
+- Browser object carving
+- Pointer traversal reconstruction
+- URL and page title recovery
+- Tab, Tab Group, and window reconstruction
+- Incognito/Private mode detection
+- Evidence integrity verification (MD5/SHA-256)
+- Automated forensic evaluation
+- CSV/JSON report generation
+
+## Contributions
+
+- **XML-to-Pickle optimization** for object-layout loading 
+- Ground-truth-based evaluation framework
+- Automated forensic metrics calculation 
+- Structured forensic reporting **with investigation logs**
 
 ## Dataset
 
 The project uses:
-
-- Original Chracer sample data.
-- Custom memory dumps created by the group.
-
-
 | Case | Description |
 |---|---|
-| C00 | Original Chracer dataset for sanity check |
-| C01 | .... |
-| C02 | ... |
+| C00 | Original Chracer dataset for sanity check. |
+| C01 | **Window and URL Recovery**: 4 separate Chromium windows, each accessing 1 unique URL (Google, GitHub, YouTube, Chromium). |
+| C02 | **Tab Group Reconstruction**: 1 window containing 8 tabs organized into 4 tab groups (TabGroup1-4) with assigned colors (yellow, red, grey, blue). |
+| C03 | **Tab-specific Navigation URL Recovery**: 1 window with 2 tabs. Tab 1 navigated to 5 Wikipedia URLs; Tab 2 navigated to 5 Chromium URLs. |
 
 ## Team Members
 

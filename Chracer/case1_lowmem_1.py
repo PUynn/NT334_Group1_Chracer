@@ -19,7 +19,7 @@ sys.path.append(str(PROJECT_ROOT))
 RESULT_DIR = PROJECT_ROOT / 'reports'
 
 CHRACER_DIR = ROOT / 'chracer'
-DEFAULT_DUMP = PROJECT_ROOT / 'dumps' / 'case1.dmp'
+DEFAULT_DUMP = ROOT / 'dumps' / 'case1.dmp'
 
 # IMPORT MODULE
 from acquisition.hash_dump import preserve_evidence

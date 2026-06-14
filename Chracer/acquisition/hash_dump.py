@@ -5,19 +5,21 @@ import json
 import datetime
 from pathlib import Path
 
-# Tìm thư mục gốc của project (thư mục Chracer)
+# Chracer/acquisition/
 ROOT = Path(__file__).resolve().parent
+
 
 def preserve_evidence(file_path):
     """
-    MODULE CẢI TIẾN 1: Bảo toàn chứng cứ
-    Được gọi như một thư viện độc lập bởi các script phân tích.
+    Chain of custody / evidence hashing: compute MD5 and SHA256, write metadata JSON.
+
+    Callable as a library from analysis scripts (`preserve_evidence(path)`).
     """
-    print('### [CẢI TIẾN] Bắt đầu module bảo toàn chứng cứ tại', datetime.datetime.now())
-    
+    print("### Chain-of-custody: started at", datetime.datetime.now())
+
     if not os.path.exists(file_path):
-        print(f"Lỗi: Không tìm thấy file {file_path}")
-        exit(1)
+        print(f"Error: file not found: {file_path}")
+        raise SystemExit(1)
 
     file_stats = os.stat(file_path)
     metadata = {
@@ -33,7 +35,7 @@ def preserve_evidence(file_path):
     sha256_hash = hashlib.sha256()
     chunk_size = 4 * 1024 * 1024  # 4MB
     
-    print(f"    -> Đang tính toán mã Hash (Chunk size: 4MB)...")
+    print("    -> Hashing file (chunk size: 4MB)...")
     with open(file_path, "rb") as f:
         while chunk := f.read(chunk_size):
             md5_hash.update(chunk)
@@ -42,7 +44,7 @@ def preserve_evidence(file_path):
     metadata["md5_hash"] = md5_hash.hexdigest()
     metadata["sha256_hash"] = sha256_hash.hexdigest()
 
-    # Lưu metadata ra file JSON vào thư mục 'result'
+    # Write metadata JSON under Chracer/acquisition/result/
     output_dir = ROOT / "result"
     output_dir.mkdir(parents=True, exist_ok=True)
     base_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -53,5 +55,20 @@ def preserve_evidence(file_path):
         
     print(f"    -> MD5: {metadata['md5_hash']}")
     print(f"    -> SHA256: {metadata['sha256_hash']}")
-    print(f"    -> Metadata đã được lưu tại: {output_file}")
-    print('### Kết thúc module bảo toàn chứng cứ\n')
+    print(f"    -> Metadata saved to: {output_file}")
+    print('### Chain-of-custody module finished.\n')
+
+
+def main_cli():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Compute MD5/SHA256 for a memory dump and write evidence_metadata.json.",
+    )
+    parser.add_argument("dump_path", help="Path to the memory dump file (.dmp)")
+    args = parser.parse_args()
+    preserve_evidence(args.dump_path)
+
+
+if __name__ == "__main__":
+    main_cli()

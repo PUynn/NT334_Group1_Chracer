@@ -8,8 +8,10 @@ from pathlib import Path
 from tabulate import tabulate
 from minidump.minidumpfile import MinidumpFile
 
+from lowmem_runtime import configure_lowmem_symbols
 
 ROOT = Path(__file__).resolve().parent
+DEFAULT_DUMP = ROOT / 'dumps' / 'case1.dmp'
 RESULT_DIR = ROOT / 'result'
 
 
@@ -17,38 +19,7 @@ def extract_case1(dump_path, browser_bases):
     print('### start to load symbols at', datetime.datetime.now())
     sys.stdout.flush()
 
-    targets = discover_symbol_targets()
-    store = LazySymbolStore(SYMBOL_FILES, targets, allow_fallback_scan=False)
-    install_chracer_stub(store)
-
-    # Patch type-size resolution before importing chracer models.
-    # In low-memory mode we only preload a subset of symbol nodes, so some
-    # typedef/template names can miss exact matches in XML lookups.
-    import chracer.common_lib as common_lib
-    _orig_get_type_size = common_lib.get_type_size
-
-    def _lowmem_get_type_size(type_name: str) -> int:
-        size = _orig_get_type_size(type_name)
-        if size:
-            return size
-
-        if not type_name:
-            return 0
-
-        t = type_name.strip()
-        if t in ('SessionID', 'tab_groups::TabGroupId'):
-            return 4
-        if t.startswith('std::Cr::unique_ptr<'):
-            return 8
-        if t.startswith('std::Cr::shared_ptr<'):
-            return 16
-        if t.startswith('scoped_refptr<') or t.startswith('raw_ptr<'):
-            return 8
-        if t.endswith('*'):
-            return 8
-        return 0
-
-    common_lib.get_type_size = _lowmem_get_type_size
+    configure_lowmem_symbols(ROOT)
 
     from chracer.chromium import Browser
     from chracer.tab import Tab, NavigationEntry
@@ -121,7 +92,7 @@ def extract_case1(dump_path, browser_bases):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Low-memory case1 extractor (does not modify case1.py).')
-    parser.add_argument('--dump', default='dumps/case1.dmp', help='Path to .dmp file')
+    parser.add_argument('--dump', default=str(DEFAULT_DUMP), help='Path to .dmp file')
     parser.add_argument(
         '--bases',
         nargs='*',
