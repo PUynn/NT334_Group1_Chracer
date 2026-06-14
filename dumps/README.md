@@ -1,1 +1,0 @@
-Minidump files downloaded from the link should be stored here.
